@@ -1,0 +1,57 @@
+/**
+ * service to handle intent related actions
+ */
+const path = require("path")
+const database = require(path.join(__dirname, "./sqlClient"))
+const { z } = require("zod")
+
+const CreateIntentSchema = z.object({
+	userid: z
+		.string()
+		.uuid(),
+	type: z
+		.coerce.number()
+		.gte(1)
+		.lte(4),
+	status: z
+		.coerce.number()
+		.gte(1)
+		.lte(7),
+	description: z
+		.string()
+		.trim()
+		.min(3)
+		.max(2500)
+})
+
+async function createIntent(userid, type, status, description) {
+	/**
+	 * userid: string,
+	 * type: number,
+	 * status: number,
+	 * description: string,
+	 * 
+	 * creates a new entry in the intent record, assumes input has been sanity-checked
+	 * 
+	 */
+	try {
+		console.log("creating")
+		let id = await database.insertIntent({
+			userid, type, status, description
+		})
+
+		return {
+			success: true,
+			id
+		}
+	} catch (err) {
+		return {
+			success: false,
+			errorMessage: err.message ?? "Failed to insert into database: unspecified"
+		}
+	}
+}
+
+module.exports = {
+	CreateIntentSchema, createIntent
+}
