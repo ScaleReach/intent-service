@@ -11,7 +11,7 @@ const CreateIntentSchema = z.object({
 		.uuid(),
 	type: z
 		.coerce.number()
-		.gte(1)
+		.gte(0) // accommodate for 0 for uncategorised type (categories serial begin from 1)
 		.lte(4),
 	status: z
 		.coerce.number()
