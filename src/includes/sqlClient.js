@@ -21,7 +21,7 @@ async function getIntentData(intentId) {
 	 * queries for the intent
 	 * 
 	 * returns the intentData
-	 * returns undefined if no userData returned from query
+	 * returns undefined if no intentData returned from query
 	 */
 	try {
 		let intentDataRow = await pool.query(`SELECT * FROM "intent" WHERE id = $1`, [id])
@@ -40,7 +40,6 @@ async function insertIntent(intentData) {
 	/**
 	 * userid: string,
 	 * type: number,
-	 * status: number,
 	 * description: string
 	 * 
 	 * returns id of newly created intent if successfully
@@ -48,10 +47,10 @@ async function insertIntent(intentData) {
 	 */
 	try {
 		let intentDataRow = await pool.query(
-			`INSERT INTO "intent" (userid, type, status, description)
-				VALUES ($1, $2, $3, $4)
+			`INSERT INTO "intent" (userid, type, description)
+				VALUES ($1, $2, $3)
 				RETURNING id`,
-			[intentData.userid, intentData.type, intentData.status, intentData.description]
+			[intentData.userid, intentData.type, intentData.description]
 		)
 
 		if (intentDataRow.rows.length !== 1) {
@@ -60,26 +59,6 @@ async function insertIntent(intentData) {
 		return intentDataRow.rows[0].id
 	} catch (err) {
 		throw new SQLError(`Failed to insert into "intent": ${err.message}`)
-	}
-}
-
-async function getUserData() {
-	/**
-	 * queries for the intent
-	 * 
-	 * returns the intentData
-	 * returns undefined if no userData returned from query
-	 */
-	try {
-		let userDataRow = await pool.query(`SELECT * FROM "user"`)
-		if (userDataRow.rows.length !== 1) {
-			// no results or more than one result
-			return
-		}
-
-		return userDataRow.rows[0]
-	} catch (err) {
-		throw new SQLError(`Failed to query from "user": ${err.message}`)
 	}
 }
 

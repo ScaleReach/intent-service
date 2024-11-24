@@ -23,7 +23,6 @@ router.post("/new", authRouter.isJaneMiddleware, async (req, res) => {
 	const validatedFields = intentService.CreateIntentSchema.safeParse({
 		userid: formData.userid,
 		type: formData.type,
-		status: formData.status,
 		description: formData.description,
 	})
 
@@ -35,7 +34,7 @@ router.post("/new", authRouter.isJaneMiddleware, async (req, res) => {
 	}
 
 	const fieldData = validatedFields.data
-	const payload = await intentService.createIntent(fieldData.userid, fieldData.type, fieldData.status, fieldData.description)
+	const payload = await intentService.createIntent(fieldData.userid, fieldData.type, fieldData.description)
 	console.log("payload", payload)
 	if (!payload.success) {
 		return res.status(400).json({
@@ -46,13 +45,6 @@ router.post("/new", authRouter.isJaneMiddleware, async (req, res) => {
 	return res.json({
 		id: payload.id
 	})
-})
-
-router.get("/users", async (req, res) => {
-	let data = await database.getUserData()
-	console.log("DATA", data)
-
-	return res.json(data)
 })
 
 module.exports = { // export router object and authenticated middleware
