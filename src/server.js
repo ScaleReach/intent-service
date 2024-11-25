@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path")
 const cookieParser = require("cookie-parser")
 const bparser = require("body-parser")
+const multer = require("multer")
 const dotenv = require("dotenv").config({ path: __dirname + "/.env" })
 
 const config = require("./config")
@@ -12,6 +13,7 @@ const intent_router = require(path.join(__dirname, "./routers/intent.js"));
 
 const sessionService = require(path.join(__dirname, "./includes/session"))
 
+const upload = multer() // text fields only
 
 const app = express();
 const PORT = 3003;
@@ -43,6 +45,7 @@ app.use((req, res, next) => {
 	return next()
 })
 
+app.use(upload.none())
 app.use(bparser.text()) // raw text
 app.use(bparser.urlencoded({ extended: true })) // form-data
 app.use(auth_router.baseURL, auth_router.router)

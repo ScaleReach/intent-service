@@ -18,7 +18,7 @@ router.post("/new", authRouter.isJaneMiddleware, async (req, res) => {
 	 * 
 	 * req.body: FormData
 	 */
-	const formData = req.body // parsed by body-parse module
+	const formData = req.body // parsed by multer module
 	console.log("formData", formData)
 	const validatedFields = intentService.CreateIntentSchema.safeParse({
 		userid: formData.userid,

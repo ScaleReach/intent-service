@@ -13,10 +13,6 @@ const CreateIntentSchema = z.object({
 		.coerce.number()
 		.gte(0) // accommodate for 0 for uncategorised type (categories serial begin from 1)
 		.lte(4),
-	status: z
-		.coerce.number()
-		.gte(1)
-		.lte(7),
 	description: z
 		.string()
 		.trim()
@@ -24,11 +20,10 @@ const CreateIntentSchema = z.object({
 		.max(2500)
 })
 
-async function createIntent(userid, type, status, description) {
+async function createIntent(userid, type, description) {
 	/**
 	 * userid: string,
 	 * type: number,
-	 * status: number,
 	 * description: string,
 	 * 
 	 * creates a new entry in the intent record, assumes input has been sanity-checked
@@ -37,7 +32,7 @@ async function createIntent(userid, type, status, description) {
 	try {
 		console.log("creating")
 		let id = await database.insertIntent({
-			userid, type, status, description
+			userid, type, description
 		})
 
 		return {
