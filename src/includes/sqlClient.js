@@ -63,5 +63,5 @@ async function insertIntent(intentData) {
 }
 
 module.exports = {
-	getUserData, insertIntent
+	getIntentData, insertIntent
 }
