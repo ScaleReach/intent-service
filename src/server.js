@@ -5,6 +5,7 @@ const bparser = require("body-parser")
 const dotenv = require("dotenv").config({ path: __dirname + "/.env" })
 
 const config = require("./config")
+const header = require("./header")
 
 const auth_router = require(path.join(__dirname, "./routers/auth.js"));
 const intent_router = require(path.join(__dirname, "./routers/intent.js"));
@@ -50,9 +51,10 @@ app.use(intent_router.baseURL, intent_router.router)
 console.log("Allowing CORS", config.interface.url)
 
 app.listen(PORT, (error) => {
-	if(!error)
+	if (!error) {
 		console.log("Server is Successfully Running, and App is listening on port "+ PORT)
-	else 
+		console.log(header("Intent service", PORT))
+	} else {
 		console.log("Error occurred, server can't start", error);
 	}
-);
+});
