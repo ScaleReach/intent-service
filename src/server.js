@@ -1,5 +1,7 @@
 const express = require("express");
+const https = require("https");
 const path = require("path")
+const fs = require("fs")
 const cookieParser = require("cookie-parser")
 const bparser = require("body-parser")
 const multer = require("multer")
@@ -13,9 +15,15 @@ const intent_router = require(path.join(__dirname, "./routers/intent.js"));
 
 const sessionService = require(path.join(__dirname, "./includes/session"))
 
+const options = {
+	key: fs.readFileSync(process.env.SSL_KEY),
+	cert: fs.readFileSync(process.env.SSL_CERT),
+}
+
 const upload = multer() // text fields only
 
 const app = express();
+const server = https.createServer(options, app);
 const PORT = process.env.PORT;
 
 // cors allow interface to request
@@ -53,7 +61,7 @@ app.use(intent_router.baseURL, intent_router.router)
 
 console.log("Allowing CORS", config.interface.url)
 
-app.listen(PORT, (error) => {
+server.listen(PORT, (error) => {
 	if (!error) {
 		console.log("Server is Successfully Running, and App is listening on port "+ PORT)
 		console.log(header("Intent service", PORT))
