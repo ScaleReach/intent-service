@@ -18,7 +18,7 @@ let production = {
 	sessioncookiename: "whatami",
 
 	interface: {
-		url: "http://localhost:3000", // url for jane
+		url: "https://scalereach.team:6732", // url for jane
 		authKeyHeaderField: "x-intent-key"
 	},
 
