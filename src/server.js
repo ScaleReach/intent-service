@@ -18,7 +18,7 @@ const sessionService = require(path.join(__dirname, "./includes/session"))
 const upload = multer() // text fields only
 
 const app = express();
-const server = http.createServer(options, app);
+const server = http.createServer(app);
 const PORT = process.env.PORT;
 
 // cors allow interface to request
