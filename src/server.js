@@ -1,5 +1,5 @@
 const express = require("express");
-const https = require("https");
+const http = require("http");
 const path = require("path")
 const fs = require("fs")
 const cookieParser = require("cookie-parser")
@@ -15,15 +15,10 @@ const intent_router = require(path.join(__dirname, "./routers/intent.js"));
 
 const sessionService = require(path.join(__dirname, "./includes/session"))
 
-const options = {
-	key: fs.readFileSync(process.env.SSL_KEY),
-	cert: fs.readFileSync(process.env.SSL_CERT),
-}
-
 const upload = multer() // text fields only
 
 const app = express();
-const server = https.createServer(options, app);
+const server = http.createServer(options, app);
 const PORT = process.env.PORT;
 
 // cors allow interface to request
