@@ -33,9 +33,9 @@ COPY --from=builder /app/src ./src
 
 USER expressjs
 
-EXPOSE 3003
+EXPOSE 5732
 
-ENV PORT=3003
+ENV PORT=5732
 
 ENV HOSTNAME="0.0.0.0"
 CMD ["node", "src/server.js"]
