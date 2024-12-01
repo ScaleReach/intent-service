@@ -29,10 +29,8 @@ router.post("/establish", (req, res) => {
 		}
 
 		// create new session
-		let session = req.session // sure have
+		let session = req.session // sure have due to middleware before this route that sets the session object + cookie header
 		session._priv = 1 // upgrade privilege
-
-		// include set cookie header
 
 		// return success payload
 		return res.json({

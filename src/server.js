@@ -1,5 +1,6 @@
-const express = require("express");
-const http = require("http");
+const express = require("express")
+const { Server } = require("socket.io")
+const http = require("http")
 const path = require("path")
 const fs = require("fs")
 const cookieParser = require("cookie-parser")
@@ -13,13 +14,32 @@ const header = require("./header")
 const auth_router = require(path.join(__dirname, "./routers/auth.js"));
 const intent_router = require(path.join(__dirname, "./routers/intent.js"));
 
+const intentService = require(path.join(__dirname, "./includes/intent"))
 const sessionService = require(path.join(__dirname, "./includes/session"))
 
 const upload = multer() // text fields only
 
 const app = express();
 const server = http.createServer(app);
+const io = new Server(server)
 const PORT = process.env.PORT;
+
+// socket server
+io.on("connection", async (socket) => {
+	console.log("regular route connected")
+
+	// fetch top n latest requests, use cached
+	socket.emit("data-init", await getLatestIntent())
+})
+
+const serverHandler = (intentData) => {
+	/**
+	 * fired when new intents are being created
+	 */
+	io.sockets.emit("data-new", intentData)
+}
+intentService.server.handler = serverHandler // set reference
+
 
 // cors allow interface to request
 app.use((req, res, next) => {

@@ -42,23 +42,40 @@ async function insertIntent(intentData) {
 	 * type: number,
 	 * description: string
 	 * 
-	 * returns id of newly created intent if successfully
+	 * returns intentData representing newly created intent if successfully
 	 * otherwise throws an error
 	 */
 	try {
 		let intentDataRow = await pool.query(
 			`INSERT INTO "intent" (userid, type, description)
 				VALUES ($1, $2, $3)
-				RETURNING id`,
+				RETURNING *`,
 			[intentData.userid, intentData.type, intentData.description]
 		)
 
 		if (intentDataRow.rows.length !== 1) {
 			throw new Error(`Either 0 or more than 1 rows returned: ${JSON.stringify(intentDataRow.rows)}`)
 		}
-		return intentDataRow.rows[0].id
+		return intentDataRow.rows[0]
 	} catch (err) {
 		throw new SQLError(`Failed to insert into "intent": ${err.message}`)
+	}
+}
+
+async function getLatestIntentData(n) {
+	/**
+	 * queries for the top n latest intent
+	 * n cannot be greater than 50
+	 * 
+	 * returns the intentData[]
+	 * returns empty array if no intentData returned from query
+	 * otherwise throws an error
+	 */
+	try {
+		let intentDataRow = await pool.query(`SELECT * FROM "intent" ORDER BY time DESC LIMIT $1`, [n])
+		return intentDataRow.rows
+	} catch (err) {
+		throw new SQLError(`Failed to query from "intent": ${err.message}`)
 	}
 }
 
