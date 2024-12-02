@@ -1,6 +1,7 @@
 const express = require("express")
 const { Server } = require("socket.io")
 const http = require("http")
+const https = require("https")
 const path = require("path")
 const fs = require("fs")
 const cookieParser = require("cookie-parser")
@@ -20,7 +21,17 @@ const sessionService = require(path.join(__dirname, "./includes/session"))
 const upload = multer() // text fields only
 
 const app = express();
-const server = http.createServer(app);
+let server;
+if (process.env.NODE_ENV == "production") {
+	const options = {
+		key: fs.readFileSync(process.env.SSL_KEY),
+		cert: fs.readFileSync(process.env.SSL_CERT),
+	}
+
+	server = https.createServer(options, app);
+} else {
+	server = http.createServer(app)
+}
 const io = new Server(server, {
 	cors: {
 		origin: [config.dashboard.url],
