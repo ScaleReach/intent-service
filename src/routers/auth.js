@@ -21,8 +21,8 @@ router.post("/establish", (req, res) => {
 	 * authorise future actions
 	 */
 	let headers = req.headers
-	if (headers[config.interface.authKeyHeaderField]) {
-		let authKey = headers[config.interface.authKeyHeaderField].trim()
+	if (headers[config.jane.authKeyHeaderField]) {
+		let authKey = headers[config.jane.authKeyHeaderField].trim()
 		if (authKey !== process.env.SECRET_KEY) {
 			console.log("not equals", authKey, process.env.SECRET_KEY)
 			return res.status(400).end() // invalid credentials
@@ -50,7 +50,7 @@ const isJaneMiddleware = (req, res, next) => {
 		return res.status(400).end()
 	}
 
-	let authKey = req.headers[config.interface.authKeyHeaderField]
+	let authKey = req.headers[config.jane.authKeyHeaderField]
 	console.log("authKey", authKey)
 	if (!authKey) {
 		// no auth key supplied

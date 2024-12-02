@@ -27,7 +27,7 @@ const _cache = {
 }
 
 const socketServer = {
-	handler: undefined // will be set
+	handler: undefined, // will be set
 }
 
 async function createIntent(userid, type, description) {
@@ -40,7 +40,6 @@ async function createIntent(userid, type, description) {
 	 * 
 	 */
 	try {
-		console.log("creating")
 		let intentData = await database.insertIntent({
 			userid, type, description
 		})
@@ -68,8 +67,7 @@ async function getLatestIntent() {
 	 * returns cached intentData[]
 	 */
 	try {
-		console.log("creating")
-		let cachedData = await database.getLatestIntent(10)
+		let cachedData = await database.getLatestIntentData(10)
 
 		// set cache
 		_cache.map.clear() // clear cache
@@ -85,6 +83,7 @@ async function getLatestIntent() {
 			data: cachedData
 		}
 	} catch (err) {
+		console.log("Failed", err)
 		return {
 			success: false,
 			errorMessage: err.message ?? "Failed to insert into database: unspecified"
@@ -93,5 +92,5 @@ async function getLatestIntent() {
 }
 
 module.exports = {
-	CreateIntentSchema, createIntent, server: socketServer
+	CreateIntentSchema, createIntent, getLatestIntent, server: socketServer
 }

@@ -72,7 +72,14 @@ async function getLatestIntentData(n) {
 	 * otherwise throws an error
 	 */
 	try {
-		let intentDataRow = await pool.query(`SELECT * FROM "intent" ORDER BY time DESC LIMIT $1`, [n])
+		let intentDataRow = await pool.query(
+			`SELECT *, i.id as id, i.description as description, u.id AS ownerid, intentstatus.name AS status, it.name AS type
+				FROM "intent" i
+				JOIN "user" u ON i.userid = u.id
+				JOIN "intentstatus" intentstatus ON i.status = intentstatus.id
+				JOIN "intenttype" it ON i.type = it.id
+				ORDER BY time DESC
+				LIMIT $1`, [n])
 		return intentDataRow.rows
 	} catch (err) {
 		throw new SQLError(`Failed to query from "intent": ${err.message}`)
@@ -80,5 +87,5 @@ async function getLatestIntentData(n) {
 }
 
 module.exports = {
-	getIntentData, insertIntent
+	getIntentData, insertIntent, getLatestIntentData
 }

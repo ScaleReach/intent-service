@@ -21,7 +21,13 @@ const upload = multer() // text fields only
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server)
+const io = new Server(server, {
+	cors: {
+		origin: [config.dashboard.url],
+		methods: ["GET"],
+		credentials: false
+	}
+})
 const PORT = process.env.PORT;
 
 // socket server
@@ -29,25 +35,26 @@ io.on("connection", async (socket) => {
 	console.log("regular route connected")
 
 	// fetch top n latest requests, use cached
-	socket.emit("data-init", await getLatestIntent())
+	const data = await intentService.getLatestIntent()
+	if (data.success) {
+		io.sockets.emit("data", data.data)
+	} else {
+		io.sockets.emit("error", data.message)
+	}
 })
 
-const serverHandler = (intentData) => {
+const serverHandler = async (intentData) => {
 	/**
 	 * fired when new intents are being created
 	 */
-	io.sockets.emit("data-new", intentData)
+	const data = await intentService.getLatestIntent()
+	if (data.success) {
+		io.sockets.emit("data", data.data)
+	} else {
+		io.sockets.emit("error", data.errorMessage)
+	}
 }
 intentService.server.handler = serverHandler // set reference
-
-
-// cors allow interface to request
-app.use((req, res, next) => {
-	res.setHeader("Access-Control-Allow-Origin", config.interface.url) // allow interface
-	res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-	res.setHeader("Access-Control-Allow-Headers", `Content-Type, Authorization, ${config.interface.authKeyHeaderField}`)
-	next();
-})
 
 // attach session object to all the calls
 app.use(cookieParser()) // parse cookies
@@ -73,8 +80,6 @@ app.use(bparser.text()) // raw text
 app.use(bparser.urlencoded({ extended: true })) // form-data
 app.use(auth_router.baseURL, auth_router.router)
 app.use(intent_router.baseURL, intent_router.router)
-
-console.log("Allowing CORS", config.interface.url)
 
 server.listen(PORT, (error) => {
 	if (!error) {

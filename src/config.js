@@ -1,9 +1,12 @@
 let development = {
 	sessioncookiename: "whatami",
 
-	interface: {
-		url: "http://localhost:3000", // url for jane
+	jane: {
 		authKeyHeaderField: "x-intent-key"
+	},
+
+	dashboard: {
+		url: "http://localhost:3004"
 	},
 
 	PSQL: {
@@ -17,9 +20,12 @@ let development = {
 let production = {
 	sessioncookiename: "whatami",
 
-	interface: {
-		url: "https://scalereach.team:6732", // url for jane
+	jane: {
 		authKeyHeaderField: "x-intent-key"
+	},
+
+	dashboard: {
+		url: "https://dashboard.scalereach.team"
 	},
 
 	PSQL: {
